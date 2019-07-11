@@ -130,13 +130,6 @@ class TripService {
                 
                 // TODO utiliser resolve et reject en fonction du résultat de la recherche
                 
-                
-    Pour simuler une récupération des données distantes, utiliser la méthode setTimeout(fn,delay) pour créer une latence de 2s.
-    Renvoyer l'objet Trip correspondant au nom du voyage en paramètre.
-    Si aucun voyage ne correspond au nom en paramètre, renvoyer une erreur No trip with name xxx.
-
-
-
             }, 2000)
         });
     }
@@ -146,22 +139,22 @@ class PriceService {
 
     constructor() {
         // TODO Map of 2 trips
-        let t1 = new Trip('paris', 'Paris', 'img/paris.jpg');
-        let t2 = new Trip('rio-de-janeiro', 'Rio de Janeiro', 'img/rio-de-janeiro.jpg');
+        // let t1 = new Trip('paris', 'Paris', 'img/paris.jpg');
+        // let t2 = new Trip('rio-de-janeiro', 'Rio de Janeiro', 'img/rio-de-janeiro.jpg');
 
         // créer
-        let trips = new Map();
+        this.trips = new Map();
 
         // alimenter
-        trips.set('rio-de-janeiro', 800);
-        trips.set('paris', 100);
+        this.trips.set('rio-de-janeiro', 800);
+        this.trips.set('paris', 100);
 
         // 'paris' --> price = 100
         // 'rio-de-janeiro' --> price = 800)
         // no price for 'nantes'
     }
 
-    findPriceByTripId(tripId) {
+    findPriceByTripId(tripid) {
 
         return new Promise((resolve, reject) => {
 
@@ -169,8 +162,43 @@ class PriceService {
                 // ici l'exécution du code est asynchrone
 
                 // TODO utiliser resolve et reject en fonction du résultat de la recherche
+         
+                    
+                    if(this.trips.has(tripid)) {
+                        resolve(this.trips.get(tripid));
+                    }// gestion des erreurs
+                
+
+                reject('No price found for id' + tripid );
 
             }, 2000)
         });
     }
+    
 }
+var a = new PriceService();
+a.findPriceByTripId('paris').then(function(price){
+aff(price); 
+});
+
+var b = new TripService();
+b.findByName('Paris').then(function(trip){
+aff(trip);
+});
+b.findByName('Toulouse').then(function(a){
+aff(a);
+}).catch(function(a){
+    aff(a)
+});
+b.findByName('Rio de Janeiro').then(function(trip){
+return a.findPriceByTripId(trip.id); 
+}).then(function(b){
+    aff(b);
+});
+b.findByName('Nantes').then(function(trip){
+    return a.findPriceByTripId(trip.id); 
+    }).then(function(b){
+        aff(b);
+    }).catch(function(erreur){
+        aff(erreur);
+    });
